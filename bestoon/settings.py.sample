@@ -115,7 +115,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images) 
+# Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+#site-key
+GOOGLE_RECAPTCHA_SECRET_KEY = '6LdIargUAAAAANUaLnKCL_BC9Cbe6kBHDsCNkg-o'
+RECAPTCHA_SECRET_KEY = '6LdIargUAAAAAILNsh_1Mw-MI5mToGvd-9yz2Igq'
+POSTMARK_API_TOKEN=''
