@@ -8,12 +8,12 @@ from web.models import User, Token, Expense, Income, Passwordresetcodes
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
 
-#from django.utils.module_loading import import_string
 from django.utils.crypto import get_random_string
-#from postmark import PMMail
+from postmark import PMMail
 #from postmarker.core import PostmarkClient
 from django.conf import settings
 
+from django.core.mail import send_mail #test email message
 
 
 # create random string for Toekn
@@ -48,10 +48,10 @@ def grecaptcha_verify(request):
 def register(request):
     #if request.POST.has_key('requestcode'):
     if 'requestcode' in request.POST:
-        if not grecaptcha_verify(request):  # captcha was not correct
-            context = {
-                'message': 'کپچای گوگل درست وارد نشده بود. شاید ربات هستید؟ کد یا کلیک یا تشخیص عکس زیر فرم را درست پر کنید. ببخشید که فرم به شکل اولیه برنگشته!'}  # TODO: forgot password
-            return render(request, 'register.html', context)
+    #    if not grecaptcha_verify(request):  # captcha was not correct
+    #        context = {
+    #            'message': 'کپچای گوگل درست وارد نشده بود. شاید ربات هستید؟ کد یا کلیک یا تشخیص عکس زیر فرم را درست پر کنید. ببخشید که فرم به شکل اولیه برنگشته!'}  # TODO: forgot password
+    #        return render(request, 'register.html', context)
 
         # duplicate email
         if User.objects.filter(email=request.POST['email']).exists():
@@ -69,9 +69,19 @@ def register(request):
             temporarycode = Passwordresetcodes(
                 email=email, time=now, code=code, username=username, password=password)
             temporarycode.save()
+
+            #send_mail(
+            #    'فالسازی اکانت بستون',
+            #    'HELLO',
+            #    'khalaji_1368@yahoo.com',
+            #    ['khalajicourses@gmail.com'],
+            #    fail_silently=False,
+                #html_message='<html></html>'
+            #    )
+
             #message = PMMail(api_key=settings.POSTMARK_API_TOKEN,
             #                 subject="فعالسازی اکانت بستون",
-            #                 sender="jadi@jadi.net",
+            #                 sender="khalaji_1368@yahoo.com",
             #                 to=email,
             #                 text_body=" برای فعال کردن اکانت بستون خود روی لینک روبرو کلیک کنید: {}?code={}".format(
             #                     request.build_absolute_uri('/accounts/register/'), code),
@@ -117,6 +127,9 @@ def register(request):
 # register (web)
 
 #---------------------
+def index(request):
+    context = {}
+    return render(request,'index.html',context)
 
 
 @csrf_exempt
