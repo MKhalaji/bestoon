@@ -7,16 +7,15 @@ from django.views.decorators.csrf import csrf_exempt
 from web.models import User, Token, Expense, Income, Passwordresetcodes
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
-
 from django.utils.crypto import get_random_string
-from postmark import PMMail
-#from postmarker.core import PostmarkClient
 from django.conf import settings
+from django.db.models import Sum, Count
 
+from postmark import PMMail #not work
 from django.core.mail import send_mail #test email message
 
 
-# create random string for Toekn
+# create random string for Toekn #not work
 random_str = lambda N: ''.join(
     random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)for _ in range(N))
 
@@ -124,13 +123,29 @@ def register(request):
         context = {'message': ''}
         return render(request, 'register.html', context)
 
-# register (web)
 
-#---------------------
 def index(request):
     context = {}
     return render(request,'index.html',context)
 
+
+@csrf_exempt
+def generalstat(request):
+    #TODO:  Should get a valid duration (from - to), if not, use 1 month
+    #TODO: is the token valid?
+    this_token = request.POST['token']
+    this_user = User.objects.filter(token__token=this_token).get()
+    income = Income.objects.filter(user=this_user).aggregate(Count('amount'),Sum('amount'))
+    expense = Expense.objects.filter(user=this_user).aggregate(Count('amount'),Sum('amount'))
+    context = {}
+    context['expense'] = expense
+    context['income'] = income
+    return JsonResponse(context, encoder=JSONEncoder)
+
+
+# register (web)
+
+#---------------------
 
 @csrf_exempt
 def submit_income(request):

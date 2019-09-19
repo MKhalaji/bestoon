@@ -22,8 +22,6 @@ class Expense (models.Model):
     date = models.DateTimeField()
     amount = models.BigIntegerField()
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    #def __unicode__(self):
-        #return unicode(self.text)#"{}-{}".format(self.date,self.amount)
     def __str__(self):
         return "{}-{}-{}".format(self.date,self.user,self.amount)
 
